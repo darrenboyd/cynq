@@ -2,6 +2,7 @@ require "thor"
 require 'colorize'
 require 'cynq/local'
 require 'cynq/remote'
+require 'yaml'
 
 module Cynq
   class Command < Thor
@@ -41,14 +42,14 @@ module Cynq
 
     no_tasks do
       def load_config(remote)
-        @config = {
-          'local_root' => 'build',
-          'remotes' => {
-            'production' => {
-              'directory' => 'www.realgravity.com'
-            }
-          }
-        }
+        conf_file = File.expand_path('cynq.yml')
+        
+        unless File.exist?(conf_file)
+          $stderr.puts "Missing configuration file at #{conf_file}"
+          raise "Configuration not found"
+        end
+
+        @config = YAML::load_file(conf_file)
         @local_root = File.expand_path(@config['local_root'])
 
         unless Dir.exist?(@local_root)

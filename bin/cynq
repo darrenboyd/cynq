@@ -1,0 +1,4 @@
+require "rubygems"
+require 'cynq'
+require 'cynq/command'
+Cynq::Command.start

@@ -1,6 +1,8 @@
 # Cynq
 
-TODO: Write a gem description
+Easy synchronization of local files to cloud based storage.
+
+Built on top of the Fog gem.
 
 ## Installation
 

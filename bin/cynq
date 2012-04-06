@@ -1,4 +1,5 @@
 require "rubygems"
+gem "cynq"
 require 'cynq'
 require 'cynq/command'
 Cynq::Command.start

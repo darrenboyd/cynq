@@ -48,7 +48,7 @@ remotes:
 ```
 
 This would instruct cynq to upload the contents of the ```build``` directory.
-The ```build``` directory itself is not uploaded, making your ```index.hml```
+The ```build``` directory itself is not uploaded, making your ```index.html```
 file at the 'top-level' of your bucket.
 
 You also need AWS key information in your environment.  Make sure to do something

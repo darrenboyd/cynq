@@ -31,9 +31,9 @@ module Cynq
           :key => other_file.key,
           :body => other_file.body
         })
-        ct = content_type_for_key(other_file.key)
-        file.content_type = ct if ct
       end
+      ct = content_type_for_key(other_file.key)
+      file.content_type = ct if ct
       file.public = true
       file.save
     end

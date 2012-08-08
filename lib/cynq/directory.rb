@@ -48,6 +48,10 @@ module Cynq
       other_file.etag != self[other_file.key].etag
     end
 
+    def meta_equal?(other_file)
+      self[other_file.key].content_type == other_file.content_type
+    end
+
     def inspect
       "#{self.class.name}: #{@bucket.key} (#{keys.size} files, #{size} bytes)"
     end
@@ -69,7 +73,7 @@ module Cynq
 
     def read_current_files
       @current_files = @bucket.files.inject({}) do |hsh, file|
-        hsh[file.key] = file
+        hsh[file.key] = @bucket.files.head(file.key)
         hsh
       end
       @keys = Set.new(@current_files.keys)

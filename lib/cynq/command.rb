@@ -9,6 +9,10 @@ module Cynq
     desc "deploy REMOTE", "Upload files to REMOTE"
     method_option :dry_run, :type => :boolean, :aliases => "-n",
                     :default => false, :desc => 'Do not do anything.'
+
+    attr_reader :local_dir, :remote_dir
+
+
     def deploy(remote)
       load_config(remote)
 
@@ -16,24 +20,22 @@ module Cynq
         puts "  Dry run executing...".green
       end
 
-      local  = Local.new(@local_root)
-      remote = Remote.new(@remote['directory'])
+      establish_roots
 
-      p local
-      p remote
-
-      keys = (local.keys + remote.keys).sort
-      keys.each do |key|
+      all_keys.each do |key|
         case
-        when local.missing?(key)
+        when local_dir.missing?(key)
           puts "  deleting #{key}".red
-          remote.delete(key) unless options.dry_run?
-        when remote.missing?(key)
-          puts "    adding #{key}".green
-          remote << local[key] unless options.dry_run?
-        when remote.modified?(local[key])
+          remote_dir.delete(key) unless options.dry_run?
+        when remote_dir.missing?(key)
+          puts "    adding #{key} #{local_dir[key].content_type}".green
+          remote_dir << local_dir[key] unless options.dry_run?
+        when remote_dir.modified?(local_dir[key])
           puts "  modified #{key}".magenta
-          remote << local[key] unless options.dry_run?
+          remote_dir << local_dir[key] unless options.dry_run?
+        when !remote_dir.meta_equal?(local_dir[key])
+          puts "      meta #{key} #{local_dir[key].content_type}".white.on_magenta
+          remote_dir << local_dir[key] unless options.dry_run?
         else
           puts " unchanged #{key}" unless options.dry_run?
         end
@@ -41,9 +43,20 @@ module Cynq
     end
 
     no_tasks do
+
+      def establish_roots
+        p (@local_dir  = Local.new(@local_root))
+        p (@remote_dir = Remote.new(@remote_root['directory']))
+      end
+
+      def all_keys
+        (local_dir.keys + remote_dir.keys).sort
+      end
+
+
       def load_config(remote)
         conf_file = File.expand_path('cynq.yml')
-        
+
         unless File.exist?(conf_file)
           $stderr.puts "Missing configuration file at #{conf_file}"
           raise "Configuration not found"
@@ -57,8 +70,8 @@ module Cynq
           raise "Configuration is invalid"
         end
 
-        @remote = @config['remotes'][remote]
-        unless @remote
+        @remote_root = @config['remotes'][remote]
+        unless @remote_root
           $stderr.puts("No environment matching '#{remote}' can be found.")
           raise "Configuration is invalid"
         end

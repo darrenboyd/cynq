@@ -16,5 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = Cynq::VERSION
 
   gem.add_dependency 'fog', '~> 1.1'
+  gem.add_dependency 'thor', '~> 0.15'
   gem.add_dependency 'colorize', '~> 0.5'
 end

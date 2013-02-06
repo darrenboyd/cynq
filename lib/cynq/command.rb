@@ -9,6 +9,9 @@ module Cynq
     desc "deploy REMOTE", "Upload files to REMOTE"
     method_option :dry_run, :type => :boolean, :aliases => "-n",
                     :default => false, :desc => 'Do not do anything.'
+    method_option :config, :type => :string, :aliases => "-c",
+                    :default => 'cynq.yml', :desc => 'The configuration file to load.'
+
 
     attr_reader :local_dir, :remote_dir
 
@@ -55,7 +58,7 @@ module Cynq
 
 
       def load_config(remote)
-        conf_file = File.expand_path('cynq.yml')
+        conf_file = File.expand_path(options.config)
 
         unless File.exist?(conf_file)
           $stderr.puts "Missing configuration file at #{conf_file}"

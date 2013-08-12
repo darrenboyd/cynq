@@ -4,6 +4,10 @@ require 'cynq/local'
 require 'cynq/remote'
 require 'yaml'
 
+
+require 'excon'
+Excon.ssl_verify_peer = false
+
 module Cynq
   class Command < Thor
     desc "deploy REMOTE", "Upload files to REMOTE"
